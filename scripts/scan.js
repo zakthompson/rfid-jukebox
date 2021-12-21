@@ -1,5 +1,5 @@
-import Mfrc522 from 'mfrc522-rpi';
-import SoftSPI from 'rpi-softspi';
+const Mfrc522 = require('mfrc522-rpi');
+const SoftSPI = require('rpi-softspi');
 
 console.log('Scanning...');
 
