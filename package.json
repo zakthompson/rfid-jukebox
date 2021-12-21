@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "scan": "node scripts/scan.ts"
+    "scan": "node scripts/scan.js"
   },
   "dependencies": {
     "mfrc522-rpi": "^2.1.3",
