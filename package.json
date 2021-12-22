@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "scan": "node scripts/scan.js",
+    "scan": "node server/scan.js",
     "seed": "node scripts/seed.js"
   },
   "dependencies": {
