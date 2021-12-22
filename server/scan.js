@@ -1,5 +1,6 @@
 const Mfrc522 = require('mfrc522-rpi');
 const SoftSPI = require('rpi-softspi');
+const mpdapi =  require('mpd-api');
 const express = require('express');
 const app = express();
 const port = 4000;
@@ -12,6 +13,12 @@ const softSPI = new SoftSPI({
 });
 const mfrc522 = new Mfrc522(softSPI).setResetPin(22).setBuzzerPin(18);
 
+const config = {
+  host: 'localhost',
+  port: 6600,
+};
+
+
 const STATE = {
   READ: 'READ',
   WRITE: 'WRITE',
@@ -23,7 +30,8 @@ function setState(state) {
   currentState = state;
 }
 
-function read() {
+function async read() {
+  const client = await mpdapi.connect(config);
   mfrc522.reset();
 
   let response = mfrc522.findCard();
@@ -43,8 +51,16 @@ function read() {
     uid[2].toString(16),
     uid[3].toString(16)
   );
+  const uidString = `${uid[0].toString(16)}${uid[1].toString(
+    16
+  )}${uid[2].toString(16)}${uid[3].toString(16)}`;
 
-  mfrc522.stopCrypto();
+  switch (uidString) {
+    default:
+      await client.api.queue.clear();
+      await client.api.playback.stop();
+      return;
+  }
 }
 
 app.listen(port, () => {
