@@ -23,11 +23,15 @@ function unlock() {
   locked = false;
 }
 
-async function read() {
+async function initClient() {
+  const client = await mdpapi.connect(config);
+  return client;
+}
+
+async function read(client) {
   if (locked) return;
   count++;
   console.log('Scanning...', count);
-  const client = await mpdapi.connect(config);
   mfrc522.reset();
 
   let response = mfrc522.findCard();
@@ -130,4 +134,6 @@ async function read() {
   return;
 }
 
-setInterval(read, 500);
+initClient().then((client) => {
+  setInterval(read.bind(null, client), 500);
+});
