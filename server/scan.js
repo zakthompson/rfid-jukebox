@@ -2,9 +2,6 @@ const Mfrc522 = require('mfrc522-rpi');
 const SoftSPI = require('rpi-softspi');
 const mpdapi = require('mpd-api');
 const fs = require('fs');
-const express = require('express');
-const app = express();
-const port = 4000;
 
 const softSPI = new SoftSPI({
   clock: 23,
@@ -18,10 +15,11 @@ const config = {
   path: '/run/mpd/socket',
 };
 
+const client = await mpdapi.connect(config);
+
 let currentlyPlaying = '';
 
 async function read() {
-  const client = await mpdapi.connect(config);
   mfrc522.reset();
 
   let response = mfrc522.findCard();
@@ -61,6 +59,26 @@ async function read() {
         });
         await client.api.playback.play();
       } else {
+        console.log('Stopped playback');
+        currentlyPlaying = '';
+      }
+      break;
+    case '8722ae1a':
+      await client.api.playback.stop();
+      await client.api.queue.clear();
+      if (currentlyPlaying !== '02') {
+        currentlyPlaying = '02';
+        const albumPath = '/var/lib/mpd/music/albums/02';
+        const tracks = fs.readdirSync(albumPath);
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      } else {
+        console.log('Stopped playback');
         currentlyPlaying = '';
       }
       break;
@@ -72,8 +90,4 @@ async function read() {
   return;
 }
 
-app.listen(port, () => {
-  console.log(`RFID scanner up on port ${port}`);
-
-  read();
-});
+read();
