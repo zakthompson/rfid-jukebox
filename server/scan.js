@@ -1,6 +1,7 @@
 const Mfrc522 = require('mfrc522-rpi');
 const SoftSPI = require('rpi-softspi');
 const mpdapi = require('mpd-api');
+const fs = require('fs');
 const express = require('express');
 const app = express();
 const port = 4000;
@@ -20,6 +21,7 @@ const config = {
 const STATE = {
   READ: 'READ',
   WRITE: 'WRITE',
+  PLAY: 'PLAY',
 };
 
 let currentState = STATE.READ;
@@ -51,8 +53,12 @@ async function read() {
 
   switch (uidString) {
     case '371ebd1a':
+      const albumPath = '/var/lib/mpd/music/albums/01';
+      const tracks = fs.readdirSync(albumPath);
       await client.api.queue.clear();
-      await client.api.queue.add('file:///var/lib/mpd/music/albums/01/mixaund-inspiring-happy-morning.mp3');
+      tracks.forEach(async (track) => {
+        await client.api.queue.add(`file://${albumPath}/${track}`);
+      });
       await client.api.playback.play();
       break;
     default:
