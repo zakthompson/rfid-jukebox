@@ -98,6 +98,23 @@ async function read() {
         currentlyPlaying = '';
       }
       break;
+    case 'b755a91a':
+      if (currentlyPlaying !== '04') {
+        currentlyPlaying = '04';
+        const albumPath = '/var/lib/mpd/music/albums/04';
+        const tracks = fs.readdirSync(albumPath);
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      } else {
+        console.log('Stopped playback');
+        currentlyPlaying = '';
+      }
+      break;
     default:
     // do nothing
   }
@@ -106,4 +123,6 @@ async function read() {
   return;
 }
 
-read();
+read().catch(e => {
+  console.log('Something went wrong: ', e);
+};
