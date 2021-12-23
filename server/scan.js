@@ -16,7 +16,6 @@ const config = {
 };
 
 let currentlyPlaying = '';
-let count = 0;
 let locked = false;
 
 function unlock() {
@@ -30,8 +29,6 @@ async function initClient() {
 
 async function read(client) {
   if (locked) return;
-  count++;
-  console.log('Scanning...', count);
   mfrc522.reset();
 
   let response = mfrc522.findCard();
@@ -125,6 +122,108 @@ async function read(client) {
         currentlyPlaying = '';
       }
       break;
+    case '87849a1a':
+      if (currentlyPlaying !== '05') {
+        currentlyPlaying = '05';
+        const albumPath = '/var/lib/mpd/music/albums/05';
+        const tracks = fs.readdirSync(albumPath);
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      } else {
+        console.log('Stopped playback');
+        currentlyPlaying = '';
+      }
+      break;
+    case 'a75dcf19':
+      if (currentlyPlaying !== '06') {
+        currentlyPlaying = '06';
+        const albumPath = '/var/lib/mpd/music/albums/06';
+        const tracks = fs.readdirSync(albumPath);
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      } else {
+        console.log('Stopped playback');
+        currentlyPlaying = '';
+      }
+      break;
+    case '77eb919':
+      if (currentlyPlaying !== '07') {
+        currentlyPlaying = '07';
+        const albumPath = '/var/lib/mpd/music/albums/07';
+        const tracks = fs.readdirSync(albumPath);
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      } else {
+        console.log('Stopped playback');
+        currentlyPlaying = '';
+      }
+      break;
+    case '673dae19':
+      if (currentlyPlaying !== '08') {
+        currentlyPlaying = '08';
+        const albumPath = '/var/lib/mpd/music/albums/08';
+        const tracks = fs.readdirSync(albumPath);
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      } else {
+        console.log('Stopped playback');
+        currentlyPlaying = '';
+      }
+      break;
+    case '2720b01a':
+      if (currentlyPlaying !== '09') {
+        currentlyPlaying = '09';
+        const albumPath = '/var/lib/mpd/music/albums/09';
+        const tracks = fs.readdirSync(albumPath);
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      } else {
+        console.log('Stopped playback');
+        currentlyPlaying = '';
+      }
+      break;
+    case '17efa019':
+      if (currentlyPlaying !== '10') {
+        currentlyPlaying = '10';
+        const albumPath = '/var/lib/mpd/music/albums/10';
+        const tracks = fs.readdirSync(albumPath);
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      } else {
+        console.log('Stopped playback');
+        currentlyPlaying = '';
+      }
+      break;
     default:
     // do nothing
   }
@@ -135,5 +234,6 @@ async function read(client) {
 }
 
 initClient().then((client) => {
+  console.log('RFID scanner active');
   setInterval(read.bind(null, client), 500);
 });
