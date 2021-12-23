@@ -24,7 +24,7 @@ function unlock() {
 }
 
 async function initClient() {
-  const client = await mdpapi.connect(config);
+  const client = await mpdapi.connect(config);
   return client;
 }
 
