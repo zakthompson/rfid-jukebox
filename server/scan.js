@@ -51,8 +51,9 @@ async function read() {
 
   switch (uidString) {
     case '371ebd1a':
-      await client.api.queue.add('/var/lib/mpd/music/albums/01');
-      await client.playback.play();
+      await client.api.queue.clear();
+      await client.api.queue.add('file:///var/lib/mpd/music/albums/01/mixaund-inspiring-happy-morning.mp3');
+      await client.api.playback.play();
       break;
     default:
       await client.api.queue.clear();
