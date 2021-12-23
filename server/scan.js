@@ -43,16 +43,12 @@ async function read() {
   }
 
   const uid = response.data;
-  console.log(
-    'Detected UID: %s %s %s %s',
-    uid[0].toString(16),
-    uid[1].toString(16),
-    uid[2].toString(16),
-    uid[3].toString(16)
-  );
-  const uidString = `${uid[0].toString(16)}${uid[1].toString(
-    16
-  )}${uid[2].toString(16)}${uid[3].toString(16)}`;
+  const d1 = uid[0].toString(16);
+  const d2 = uid[1].toString(16);
+  const d3 = uid[2].toString(16);
+  const d4 = uid[3].toString(16);
+  const uidString = `${d1}${d2}${d3}${d4}`;
+  console.log(`Detected UID: ${uidString}`);
 
   switch (uidString) {
     default:
