@@ -51,6 +51,10 @@ async function read() {
   console.log(`Detected UID: ${uidString}`);
 
   switch (uidString) {
+    case '371ebd1a':
+      await client.api.queue.add('/var/lib/mpd/music/albums/01');
+      await client.playback.play();
+      break;
     default:
       await client.api.queue.clear();
       await client.api.playback.stop();
