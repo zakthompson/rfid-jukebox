@@ -55,15 +55,19 @@ async function read() {
     case '371ebd1a':
       const albumPath = '/var/lib/mpd/music/albums/01';
       const tracks = fs.readdirSync(albumPath);
+      await client.api.playback.stop();
       await client.api.queue.clear();
       tracks.forEach(async (track) => {
-        await client.api.queue.add(`file://${albumPath}/${track}`);
+	if (track[0] !== '.') {
+		console.log(`Queueing ${track}`);
+		await client.api.queue.add(`file://${albumPath}/${track}`);
+	}
       });
       await client.api.playback.play();
       break;
     default:
-      await client.api.queue.clear();
       await client.api.playback.stop();
+      await client.api.queue.clear();
       return;
   }
 }
