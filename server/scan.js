@@ -18,28 +18,22 @@ const config = {
   path: '/run/mpd/socket',
 };
 
-const STATE = {
-  READ: 'READ',
-  WRITE: 'WRITE',
-  PLAY: 'PLAY',
-};
-
-let currentState = STATE.READ;
-
-function setState(state) {
-  currentState = state;
-}
+let currentlyPlaying = '';
 
 async function read() {
   const client = await mpdapi.connect(config);
   mfrc522.reset();
 
   let response = mfrc522.findCard();
-  if (!response.status) return;
+  if (!response.status) {
+    setTimeout(read, 250);
+    return;
+  }
 
   response = mfrc522.getUid();
   if (!response.status) {
     console.log('Error scanning UID');
+    setTimeout(read, 250);
     return;
   }
 
@@ -53,38 +47,32 @@ async function read() {
 
   switch (uidString) {
     case '371ebd1a':
-      const albumPath = '/var/lib/mpd/music/albums/01';
-      const tracks = fs.readdirSync(albumPath);
       await client.api.playback.stop();
       await client.api.queue.clear();
-      tracks.forEach(async (track) => {
-	if (track[0] !== '.') {
-		console.log(`Queueing ${track}`);
-		await client.api.queue.add(`file://${albumPath}/${track}`);
-	}
-      });
-      await client.api.playback.play();
+      if (currentlyPlaying !== '01') {
+        const albumPath = '/var/lib/mpd/music/albums/01';
+        const tracks = fs.readdirSync(albumPath);
+        await client.api.playback.stop();
+        await client.api.queue.clear();
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      }
       break;
     default:
       await client.api.playback.stop();
       await client.api.queue.clear();
       return;
   }
+  setTimeout(read, 5000);
 }
 
 app.listen(port, () => {
   console.log(`RFID scanner up on port ${port}`);
 
-  setInterval(function () {
-    switch (currentState) {
-      case STATE.READ:
-        read();
-        break;
-      case STATE.WRITE:
-        console.log('Write mode not implemented yet!');
-        break;
-      default:
-        console.log('Server state invalid');
-    }
-  }, 250);
+  read();
 });
