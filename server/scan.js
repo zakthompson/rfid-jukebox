@@ -16,9 +16,11 @@ const config = {
 };
 
 let currentlyPlaying = '';
+let count = 0;
 
 async function read() {
-  console.log('Scanning...');
+  count++;
+  console.log('Scanning...', count);
   const client = await mpdapi.connect(config);
   mfrc522.reset();
 
@@ -126,3 +128,4 @@ async function read() {
 read().catch((e) => {
   console.log('Something went wrong: ', e);
 });
+setInterval(function() {}, 1 << 3);
