@@ -17,8 +17,14 @@ const config = {
 
 let currentlyPlaying = '';
 let count = 0;
+let locked = false;
+
+function unlock() {
+  locked = false;
+}
 
 async function read() {
+  if (locked) return;
   count++;
   console.log('Scanning...', count);
   const client = await mpdapi.connect(config);
@@ -26,14 +32,12 @@ async function read() {
 
   let response = mfrc522.findCard();
   if (!response.status) {
-    setTimeout(read, 300);
     return;
   }
 
   response = mfrc522.getUid();
   if (!response.status) {
     console.log('Error scanning UID');
-    setTimeout(read, 300);
     return;
   }
 
@@ -121,11 +125,9 @@ async function read() {
     // do nothing
   }
   mfrc522.stopCrypto();
-  setTimeout(read, 5000);
+  locked = true;
+  setTimeout(unlock, 5000);
   return;
 }
 
-read().catch((e) => {
-  console.log('Something went wrong: ', e);
-});
-setInterval(function() {}, 1 << 3);
+setInterval(read, 300);
