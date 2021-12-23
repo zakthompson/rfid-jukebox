@@ -123,6 +123,6 @@ async function read() {
   return;
 }
 
-read().catch(e => {
+read().catch((e) => {
   console.log('Something went wrong: ', e);
-};
+});
