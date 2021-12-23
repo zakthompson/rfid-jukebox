@@ -24,14 +24,14 @@ async function read() {
 
   let response = mfrc522.findCard();
   if (!response.status) {
-    setTimeout(read, 250);
+    setTimeout(read, 300);
     return;
   }
 
   response = mfrc522.getUid();
   if (!response.status) {
     console.log('Error scanning UID');
-    setTimeout(read, 250);
+    setTimeout(read, 300);
     return;
   }
 
@@ -43,10 +43,11 @@ async function read() {
   const uidString = `${d1}${d2}${d3}${d4}`;
   console.log(`Detected UID: ${uidString}`);
 
+  await client.api.playback.stop();
+  await client.api.queue.clear();
+
   switch (uidString) {
     case '371ebd1a':
-      await client.api.playback.stop();
-      await client.api.queue.clear();
       if (currentlyPlaying !== '01') {
         currentlyPlaying = '01';
         const albumPath = '/var/lib/mpd/music/albums/01';
@@ -64,8 +65,6 @@ async function read() {
       }
       break;
     case '8722ae1a':
-      await client.api.playback.stop();
-      await client.api.queue.clear();
       if (currentlyPlaying !== '02') {
         currentlyPlaying = '02';
         const albumPath = '/var/lib/mpd/music/albums/02';
@@ -82,10 +81,27 @@ async function read() {
         currentlyPlaying = '';
       }
       break;
+    case 'e7739f1a':
+      if (currentlyPlaying !== '03') {
+        currentlyPlaying = '03';
+        const albumPath = '/var/lib/mpd/music/albums/03';
+        const tracks = fs.readdirSync(albumPath);
+        tracks.forEach(async (track) => {
+          if (track[0] !== '.') {
+            console.log(`Queueing ${track}`);
+            await client.api.queue.add(`file://${albumPath}/${track}`);
+          }
+        });
+        await client.api.playback.play();
+      } else {
+        console.log('Stopped playback');
+        currentlyPlaying = '';
+      }
+      break;
     default:
-      await client.api.playback.stop();
-      await client.api.queue.clear();
+    // do nothing
   }
+  mfrc522.stopCrypto();
   setTimeout(read, 5000);
   return;
 }
