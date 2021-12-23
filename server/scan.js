@@ -50,10 +50,9 @@ async function read() {
       await client.api.playback.stop();
       await client.api.queue.clear();
       if (currentlyPlaying !== '01') {
+        currentlyPlaying = '01';
         const albumPath = '/var/lib/mpd/music/albums/01';
         const tracks = fs.readdirSync(albumPath);
-        await client.api.playback.stop();
-        await client.api.queue.clear();
         tracks.forEach(async (track) => {
           if (track[0] !== '.') {
             console.log(`Queueing ${track}`);
@@ -66,9 +65,9 @@ async function read() {
     default:
       await client.api.playback.stop();
       await client.api.queue.clear();
-      return;
   }
   setTimeout(read, 5000);
+  return;
 }
 
 app.listen(port, () => {
