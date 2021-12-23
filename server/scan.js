@@ -15,11 +15,10 @@ const config = {
   path: '/run/mpd/socket',
 };
 
-const client = await mpdapi.connect(config);
-
 let currentlyPlaying = '';
 
 async function read() {
+  const client = await mpdapi.connect(config);
   mfrc522.reset();
 
   let response = mfrc522.findCard();
