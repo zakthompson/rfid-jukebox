@@ -130,4 +130,4 @@ async function read() {
   return;
 }
 
-setInterval(read, 300);
+setInterval(read, 500);
