@@ -18,6 +18,7 @@ const config = {
 let currentlyPlaying = '';
 
 async function read() {
+  console.log('Scanning...');
   const client = await mpdapi.connect(config);
   mfrc522.reset();
 
