@@ -1,6 +1,6 @@
 const Mfrc522 = require('mfrc522-rpi');
 const SoftSPI = require('rpi-softspi');
-const mpdapi =  require('mpd-api');
+const mpdapi = require('mpd-api');
 const express = require('express');
 const app = express();
 const port = 4000;
@@ -18,7 +18,6 @@ const config = {
   port: 6600,
 };
 
-
 const STATE = {
   READ: 'READ',
   WRITE: 'WRITE',
@@ -30,7 +29,7 @@ function setState(state) {
   currentState = state;
 }
 
-function async read() {
+async function read() {
   const client = await mpdapi.connect(config);
   mfrc522.reset();
 
