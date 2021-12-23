@@ -60,6 +60,8 @@ async function read() {
           }
         });
         await client.api.playback.play();
+      } else {
+        currentlyPlaying = '';
       }
       break;
     default:
