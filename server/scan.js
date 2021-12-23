@@ -14,8 +14,7 @@ const softSPI = new SoftSPI({
 const mfrc522 = new Mfrc522(softSPI).setResetPin(22).setBuzzerPin(18);
 
 const config = {
-  host: 'localhost',
-  port: 6600,
+  path: '/run/mpd/socket',
 };
 
 const STATE = {
