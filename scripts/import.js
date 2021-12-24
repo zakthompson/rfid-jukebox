@@ -9,6 +9,13 @@ let folderToImport;
   const albumPath = `/boot/albums/${num}`;
   const files = fs.readdirSync(albumPath);
   if (files.length > 0) {
+    // remove spaces
+    files.forEach((file) => {
+      fs.renameSync(
+        `${albumPath}/${file}`,
+        `${albumPath}/${file.replace(/ /g, '_')}`
+      );
+    });
     folderToImport = num;
     return true;
   }
