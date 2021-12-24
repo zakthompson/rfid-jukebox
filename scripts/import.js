@@ -34,3 +34,4 @@ fs.copySync(
 fs.rmSync(`/boot/albums/${folderToImport}`, { recursive: true, force: true });
 fs.mkdirSync(`/boot/albums/${folderToImport}`);
 execSync('chown -R mpd:audio /var/lib/mpd/music');
+execSync('mpc update');
