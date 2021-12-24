@@ -1,6 +1,6 @@
 #!/home/pi/.nvm/versions/node/v17.3.0/bin/node
 
-const fs = require('fs');
+const fs = require('fs-extra');
 const { execSync } = require('child_process');
 
 let folderToImport;
@@ -19,10 +19,11 @@ fs.rmSync(`/var/lib/mpd/music/albums/${folderToImport}`, {
   force: true,
 });
 
-fs.renameSync(
+fs.copySync(
   `/boot/albums/${folderToImport}`,
   `/var/lib/mpd/music/albums/${folderToImport}`
 );
 
+fs.rmSync(`/boot/albums/${folderToImport}`);
 fs.mkdirSync(`/boot/albums/${folderToImport}`);
 execSync('chown -R mpd:audio /var/lib/mpd/music');

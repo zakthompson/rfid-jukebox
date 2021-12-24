@@ -5,6 +5,7 @@
     "scan": "node server/scan.js"
   },
   "dependencies": {
+    "fs-extra": "^10.0.0",
     "mfrc522-rpi": "^2.1.3",
     "mpd-api": "^1.1.0",
     "rpi-softspi": "^1.0.5"
