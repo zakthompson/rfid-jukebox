@@ -13,7 +13,7 @@ let folderToImport;
     files.forEach((file) => {
       fs.renameSync(
         `${albumPath}/${file}`,
-        `${albumPath}/${file.replace(/ /g, '_')}`
+        `${albumPath}/${file.replace(/[^\w]/gi, '_')}`
       );
     });
     folderToImport = num;
